@@ -1,0 +1,97 @@
+# Created by .ignore support plugin (hsz.mobi)
+### Example user template template
+### Example user template
+
+# IntelliJ project files
+.idea
+*.iml
+out
+gen
+### CVS template
+/CVS/*
+**/CVS/*
+.cvsignore
+*/.cvsignore
+
+### Images template
+# JPEG
+*.jpg
+*.jpeg
+*.jpe
+*.jif
+*.jfif
+*.jfi
+
+# JPEG 2000
+*.jp2
+*.j2k
+*.jpf
+*.jpx
+*.jpm
+*.mj2
+
+# JPEG XR
+*.jxr
+*.hdp
+*.wdp
+
+# Graphics Interchange Format
+*.gif
+
+# RAW
+*.raw
+
+# Web P
+*.webp
+
+# Portable Network Graphics
+*.png
+
+# Animated Portable Network Graphics
+*.apng
+
+# Multiple-image Network Graphics
+*.mng
+
+# Tagged Image File Format
+*.tiff
+*.tif
+
+# Scalable Vector Graphics
+*.svg
+*.svgz
+
+# Portable Document Format
+*.pdf
+
+# X BitMap
+*.xbm
+
+# BMP
+*.bmp
+*.dib
+
+# ICO
+*.ico
+
+# 3D Images
+*.3dm
+*.max
+
+!/.gitignore
+.gitignore
+# model weight
+*.pth
+*.svs
+*.jpg
+*.jpeg
+*.txt
+*.npy
+*.csv
+*.eps
+
+!bin/.gitkeep
+!data/chekpoints/.gitkeep
+!requirements.txt
+src/__pycache__/
+src/model/__pycache__/
