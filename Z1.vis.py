@@ -197,14 +197,21 @@ data_loader_test = torch.utils.data.DataLoader(dataset_test,
                                                collate_fn=utils.collate_fn
                                                )
 
+def apply_mask(image, mask, color, alpha=0.4):
+    for c in range(3):
+        image[:, :, c] = np.where(mask == 1,
+                                  (1-alpha)*image[:, :, c] + alpha * color[c],
+                                  image[:, :, c])
+    return image
 
-for batch in data_loader:
-    break
 import matplotlib.pyplot as plt
 import cv2
 
-img = batch[0][0].cpu().numpy().transpose(1,2,0).copy()
+for batch in data_loader:
+    break
 
+
+img = batch[0][0].cpu().numpy().transpose(1,2,0).copy()
 mean = [0.485, 0.456, 0.406]
 std = [0.229, 0.224, 0.225]
 for idx, (m, s) in enumerate(zip(mean, std)):
@@ -220,8 +227,14 @@ boxes = batch[1][0]['boxes'].cpu().numpy().astype(int)
 
 img = (img*255).astype(np.uint8)
 #img = img.transpose(2,0,1)
-
+img.shape
 for i in range(len(boxes)):
-    img = cv2.rectangle(img, boxes[i,:2].tolist(), boxes[i,2:].tolist(), (255, 0, 0), 10)
+    img = cv2.rectangle(img, boxes[i,:2].tolist(), boxes[i,2:].tolist(), (255, 0, 0), 5)
+
+masks = batch[1][0]['masks'].cpu().numpy().astype(int)
+masks = np.sum(masks, axis=0)
+masks[masks>0] = 1
+img = apply_mask(img, masks, (0, 0, 255), 0.4)
+
 plt.imshow(img)
 plt.show()

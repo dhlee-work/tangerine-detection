@@ -31,7 +31,7 @@ for i in range(len(anno_list)):
         re_img = cv2.resize(img, (r_w, r_h), interpolation = cv2.INTER_CUBIC)
 
 
-        ### Annotation preprocessing
+        ## Annotation preprocessing
         img_anno = anno_data[anno_data.filename == img_name]
         if not eval(img_anno.region_shape_attributes.values[0]):
             print('aaa')
@@ -48,9 +48,8 @@ for i in range(len(anno_list)):
                                           _anno_dict['theta'],
                                           0, 360,
                                           idx+1, -1)
-        cv2.imwrite(f'./data/image/{img_name}', re_img)
+        cv2.imwrite(f'./data/image/{os.path.splitext(img_name)[0]}.jpg', re_img)
         np.save(f'./data/mask/{img_name_base}.mask.npy', _mask)
-
 
 
 

@@ -6,6 +6,7 @@ from PIL import Image
 import torchvision
 from torchvision.models.detection.faster_rcnn import FastRCNNPredictor
 from torchvision.models.detection.mask_rcnn import MaskRCNNPredictor
+from torchvision.models.detection.anchor_utils import AnchorGenerator
 from src.engine import train_one_epoch, evaluate
 from torch.utils.data import Dataset
 from src import utils
@@ -14,6 +15,8 @@ import albumentations as A
 import cv2
 import time
 #load data
+
+
 
 
 class TangerineDataset(Dataset):
@@ -59,13 +62,6 @@ class TangerineDataset(Dataset):
             masks = masks2[np.sum(masks2.reshape(len(masks_list), -1), axis=1) != 0]
             if not masks.tolist():
                 continue
-            #h0 = np.sum(np.sum(masks, axis=0)[:, 0])
-            #he = np.sum(np.sum(masks, axis=0)[:, -1])
-            #w0 = np.sum(np.sum(masks, axis=0)[0, :])
-            #we = np.sum(np.sum(masks, axis=0)[-1, :])
-            #edge = h0 + he + w0 + we
-            #if edge > 0:
-            #    continue
 
             num_objs = masks.shape[0]
 
@@ -127,8 +123,11 @@ def get_transform(train):
 # load a model pre-trained on COCO
 def get_model_instance_segmentation(num_classes):
     # load an instance segmentation model pre-trained on COCO
-    model = torchvision.models.detection.maskrcnn_resnet50_fpn(pretrained=True)
+    anchor_sizes = ((32,), (64,), (80,), (128,), (256,))
+    aspect_ratios = ((0.5, 1.0, 2.0),) * len(anchor_sizes)
+    anchor_generator = AnchorGenerator(anchor_sizes, aspect_ratios)
 
+    model = torchvision.models.detection.maskrcnn_resnet50_fpn(pretrained=True, rpn_anchor_generator=anchor_generator)
     # get number of input features for the classifier
     in_features = model.roi_heads.box_predictor.cls_score.in_features
     # replace the pre-trained head with a new one
@@ -142,34 +141,14 @@ def get_model_instance_segmentation(num_classes):
                                                        hidden_layer,
                                                        num_classes)
 
+
     return model
 
-transform = A.Compose([A.RandomCrop(width=800, height=800),
+
+transform = A.Compose([A.RandomCrop(width=400, height=400),
                        A.HorizontalFlip(p=0.5),
                        A.RandomBrightnessContrast(p=0.2),
                        ])
-
-
-#train
-#check
-#model = torchvision.models.detection.fasterrcnn_resnet50_fpn(pretrained=True)
-#dataset = TangerineDataset('./data', transform)
-#data_loader = torch.utils.data.DataLoader(dataset,
-#                                          batch_size=1,
-#                                          shuffle=True,
-#                                          num_workers=4,
-#                                          collate_fn=utils.collate_fn)
-# For Training
-#images, targets = next(iter(data_loader))
-#images = list(image for image in images)
-#targets = [{k: v for k, v in t.items()} for t in targets]
-#output = model(images, targets)   # Returns losses and detections
-# For inference
-#model.eval()
-#x = [torch.rand(3, 300, 400), torch.rand(3, 500, 400)]
-#predictions = model(x)           # Returns predictions
-###
-
 
 #def main():
 # train on the GPU or on the CPU, if a GPU is not available
@@ -184,7 +163,7 @@ dataset_test = TangerineDataset('./data', transform)
 # split the dataset in train and test set
 # define training and validation data loaders
 data_loader = torch.utils.data.DataLoader(dataset,
-                                          batch_size=1,
+                                          batch_size=2,
                                           shuffle=True,
                                           num_workers=4,
                                           collate_fn=utils.collate_fn
@@ -197,40 +176,6 @@ data_loader_test = torch.utils.data.DataLoader(dataset_test,
                                                collate_fn=utils.collate_fn
                                                )
 
-
-for batch in data_loader:
-    break
-
-
-img = batch[0][0].cpu().numpy().transpose(1,2,0).copy()
-
-mean = [0.485, 0.456, 0.406]
-std = [0.229, 0.224, 0.225]
-for idx, (m, s) in enumerate(zip(mean, std)):
-    img[..., idx] = img[..., idx] * s + m
-    img[..., idx] = (img[..., idx] - np.min(img[..., idx]))/(np.max(img[..., idx]) - np.min(img[..., idx]))
-
-boxes = batch[1][0]['boxes'].cpu().numpy().astype(int)
-
-
-img = (img*255).astype(np.uint8)
-#img = img.transpose(2,0,1)
-
-for i in range(len(boxes)):
-    img = cv2.rectangle(img, boxes[i,:2].tolist(), boxes[i,2:].tolist(), (255, 0, 0), 10)
-plt.imshow(img)
-plt.show()
-
-masks = batch[1][0]['masks'].cpu().numpy().astype(int)
-masks = np.sum(masks, axis=0)
-masks[masks>0] = 1
-
-img[]
-
-
-plt.imshow(masks)
-plt.show()
-
 # get the model using our helper function
 model = get_model_instance_segmentation(num_classes)
 
@@ -239,22 +184,61 @@ model.to(device)
 
 # construct an optimizer
 params = [p for p in model.parameters() if p.requires_grad]
-optimizer = torch.optim.SGD(params, lr=0.005,
-                            momentum=0.9, weight_decay=0.0005)
+optimizer = torch.optim.SGD(params, lr=0.005, momentum=0.9, weight_decay=0.0005)
 # and a learning rate scheduler
 lr_scheduler = torch.optim.lr_scheduler.StepLR(optimizer,
-                                               step_size=3,
+                                               step_size=30,
                                                gamma=0.1)
 
 # let's train it for 10 epochs
-num_epochs = 10
+num_epochs = 100
 
 for epoch in range(num_epochs):
     # train for one epoch, printing every 10 iterations
-    train_one_epoch(model, optimizer, data_loader, device, epoch, print_freq=1)
+    train_one_epoch(model, optimizer, data_loader, device, epoch, print_freq=100)
     # update the learning rate
     lr_scheduler.step()
     # evaluate on the test dataset
-    evaluate(model, data_loader_test, device=device)
-
+    #evaluate(model, data_loader_test, device=device)
+torch.save(model.state_dict(), f'./model/model_{epoch}.pth')
 print("That's it!")
+
+model.eval()
+model.load_state_dict(torch.load(f'./model/model_99.pth'))
+
+import matplotlib.pyplot as plt
+import cv2
+
+for batch in data_loader:
+
+
+    img = batch[0][0].to(device)
+    out = model((img,))
+    target_img = img.detach().cpu().numpy()
+    target_img = target_img.transpose(1,2,0)
+
+    out_box = out[0]['boxes'].detach().cpu().numpy().astype(int)
+    out_score = out[0]['scores'].detach().cpu().numpy()
+    for i in range(3):
+        mean = [0.485, 0.456, 0.406]
+        std = [0.229, 0.224, 0.225]
+        target_img[...,i] = target_img[...,i]*std[i] + mean[i]
+        target_img[..., i] = (target_img[..., i] - np.min(target_img[..., i]))/(np.max(target_img[..., i]) - np.min(target_img[..., i]))
+
+
+    plt.imshow(target_img)
+    plt.show()
+    num_c = np.sum(out_score>0.7)
+
+    target_img2 = (target_img*255).astype(np.uint8).copy()
+    for i in range(num_c):
+        target_img2 = cv2.rectangle(target_img2, [out_box[i,0],out_box[i,2]], [out_box[i,1],out_box[i,3]], (255, 0, 0), 5)
+    plt.imshow(target_img2)
+    plt.show()
+
+    break
+
+
+
+
+
