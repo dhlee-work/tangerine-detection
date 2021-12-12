@@ -114,7 +114,7 @@ def get_transform(train):
 
 
 # load a model pre-trained on COCO
-def get_model_instance_segmentation(num_classes):
+def get_model_instance_segmentation(num_classes, box_detections_per_img=100, box_nms_thresh=0.3):
     # load an instance segmentation model pre-trained on COCO
     anchor_sizes = ((32,), (64,), (80,), (128,), (256,))
     aspect_ratios = ((0.5, 1.0, 2.0),) * len(anchor_sizes)
@@ -122,7 +122,10 @@ def get_model_instance_segmentation(num_classes):
     model = torchvision.models.detection.maskrcnn_resnet50_fpn(pretrained=True,
                                                                rpn_anchor_generator=anchor_generator,
                                                                min_size=800,
-                                                               max_size=2000)
+                                                               max_size=2000,
+                                                               box_detections_per_img=box_detections_per_img,
+                                                               box_nms_thresh=box_nms_thresh
+                                                               )
     # get number of input features for the classifier
     in_features = model.roi_heads.box_predictor.cls_score.in_features
     # replace the pre-trained head with a new one
@@ -137,3 +140,10 @@ def get_model_instance_segmentation(num_classes):
                                                        num_classes)
 
     return model
+
+def apply_mask(image, mask, color, alpha=0.4):
+    for c in range(3):
+        image[:, :, c] = np.where(mask == 1,
+                                  (1 - alpha) * image[:, :, c] + alpha * color[c],
+                                  image[:, :, c])
+    return image
