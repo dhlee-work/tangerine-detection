@@ -44,3 +44,10 @@ for idx, col in enumerate(loss_result.columns[1:-1]):
     plt.legend()
 plt.savefig(f'./fig/overall-loss-per-epochs.jpg')
 plt.show()
+
+
+##AP
+
+
+evaluate(model, data_loader, device)
+

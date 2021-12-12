@@ -89,6 +89,11 @@ for epoch in range(1, num_epochs + 1):
     if epoch % 10 == 0:
         torch.save(model.state_dict(), f'./model/maskrcnn/model_{epoch}.pth')
         np.save('./model/maskrcnn/metric_log.npy', history)
+
+
+eval_one_epoch
 torch.save(model.state_dict(), f'./model/model_{epoch}.pth')
 np.save('./model/maskrcnn/metric_log.npy', history)
 print("finish")
+
+

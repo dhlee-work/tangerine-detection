@@ -43,6 +43,7 @@ for batch in test_data_loader:
     img_id = batch[1][0]['image_id'].detach().cpu().numpy().astype(int)[0]
     boxes = batch[1][0]['boxes'].detach().cpu().numpy().astype(int)
     masks = batch[1][0]['masks'].cpu().numpy().astype(int)
+    masks = masks.transpose(1,2,0)
     img = batch[0][0].to(device)
     _img = img.detach().cpu().numpy()
     _img = _img.transpose(1, 2, 0)

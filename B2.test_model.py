@@ -5,20 +5,10 @@ import cv2
 import matplotlib.pyplot as plt
 import numpy as np
 import torch
-import torchvision
 from torch.utils.data import Dataset
-from torch.utils.data import Subset
-from torchvision import transforms as T
-from torchvision.models.detection.anchor_utils import AnchorGenerator
-from torchvision.models.detection.faster_rcnn import FastRCNNPredictor
-from torchvision.models.detection.mask_rcnn import MaskRCNNPredictor
 
 from src import utils
 from src.tangerine_utils import TangerineDataset, get_model_instance_segmentation, apply_mask
-
-
-
-
 
 if not os.path.exists('./model/maskrcnn'):
     os.makedirs('./model/maskrcnn')
@@ -74,7 +64,7 @@ model.load_state_dict(torch.load(f'./model/maskrcnn/model_200.pth'))
 target_num = []
 output_num = []
 for batch in test_data_loader:
-    img_id = batch[1][0]['image_id'].detach().cpu().numpy().astype(int)
+    img_id = batch[1][0]['image_id'].detach().cpu().numpy().astype(int)[0]
     boxes = batch[1][0]['boxes'].detach().cpu().numpy().astype(int)
     masks = batch[1][0]['masks'].cpu().numpy().astype(int)
     img = batch[0][0].to(device)
@@ -84,7 +74,7 @@ for batch in test_data_loader:
 
     out_box = out[0]['boxes'].detach().cpu().numpy().astype(int)
     out_score = out[0]['scores'].detach().cpu().numpy()
-    out_mask = out[0]['masks'].detach().cpu().numpy().astype(int)
+    out_mask = out[0]['masks'].detach().cpu().numpy().squeeze()
     for i in range(3):
         mean = [0.485, 0.456, 0.406]
         std = [0.229, 0.224, 0.225]
@@ -120,9 +110,10 @@ for batch in test_data_loader:
                                 [out_box[i, 2], out_box[i, 3]],
                                 (255, 0, 0),
                                 5)
+    out_mask = out[0]['masks'].detach().cpu().numpy().squeeze()
     out_mask = np.sum(out_mask[:num_o], axis=0)
-    out_mask[out_mask > 0] = 1
-    out_img = apply_mask(out_img, masks, (0, 0, 255), 0.4)
+    out_mask[out_mask > 0.8] = 1
+    out_img = apply_mask(out_img, out_mask, (0, 0, 255), 0.4)
 
     plt.imshow(out_img)
     plt.xlabel('Predicted Tangerine', size=20)
@@ -131,6 +122,8 @@ for batch in test_data_loader:
     plt.close()
     target_num.append(num_t)
     output_num.append(num_o)
+
+
 
 count_result = {'output': output_num, 'target': output_num}
 np.save('./model/maskrcnn/count_result.npy', count_result)
