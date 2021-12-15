@@ -1,4 +1,5 @@
 # Prediction of Tangerine Production through Tangerine Image Object Detection
+Project for THEORY AND APPLICATIONS OF DEEP LEARNING LETURE IN YONSEI UNIV. (IIE7721.01-00)
 ## Pipeline
 ![piple](/fig/pipline.jpg)
 
