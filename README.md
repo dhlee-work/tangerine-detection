@@ -2,7 +2,7 @@
 ## Pipeline
 !['piple']('./fig/pipline.jpg')
 
-## requirments
+## Requirments
 albumentations=='1.1.0'
 torch=='1.10.0'
 torchvision=='0.11.1'
@@ -14,7 +14,19 @@ pycocotools=='2.0.3'
 matplotlib=='3.5.0'
 
 ## Quick Start
-Run Code A1.preprocessing.py to C2.evaluation-estim-farm.py 
+#### Data Preprocessing
+A1.preprocessing.py 
+A2.preprocessing_make_validset.py
+
+#### Build&Test Model
+B1.train_model.py
+B2.test_model.py
+
+#### Evaluation Model
+C1.evaluation-loss.py 
+C2.evaluation-AP.py
+C3.evaluation-estimate-farm.py 
+
 
 ## Result
 #### Detection
