@@ -1,5 +1,7 @@
 # Prediction of Tangerine Production through Tangerine Image Object Detection
-Project for THEORY AND APPLICATIONS OF DEEP LEARNING LETURE IN YONSEI UNIV. (IIE7721.01-00)
+Project for THEORY AND APPLICATIONS OF DEEP LEARNING LETURE IN YONSEI UNIV. (IIE7721.01-00)  
+Predict production on the farm is important. To solve this problem, We use detection model to count product directly. We make dataset for detecting tangerine on the farm. We trained Mask-RCNN Model for detecting tangerines. It has 0.782 AP with IoU=0.50 for bounding box and 0.781 AP with IoU=0.50 for segmentation In counting tangerines, on the train dataset, Target and Output has 0.903 Pearson’s correlation coefficient and 0.921 correlation on the validation dataset. We expect this approach will help make more accurate production forecasts.![image](https://user-images.githubusercontent.com/79500470/146203509-ca56b05e-e68b-4077-a740-d35ea27d020a.png)
+
 ## Pipeline
 ![piple](/fig/pipline.jpg)
 
