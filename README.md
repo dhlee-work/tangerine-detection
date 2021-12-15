@@ -1,4 +1,4 @@
-# Prediction of Tangerine Production throughTangerine Image Object Detection
+# Prediction of Tangerine Production through Tangerine Image Object Detection
 ## Pipeline
 ![piple](/fig/pipline.jpg)
 
