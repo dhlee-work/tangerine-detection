@@ -33,5 +33,5 @@ C3.evaluation-estimate-farm.py
 ![output](/fig/output.png)  
 
 #### Counting tangerine 
-![scatter_plot](/fig/scatter_plot.png)  
+![scatter_plot](/fig/scatter_plot.jpg)  
 
