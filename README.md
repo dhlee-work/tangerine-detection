@@ -1,6 +1,6 @@
 # Prediction of Tangerine Production throughTangerine Image Object Detection
 ## Pipeline
-!['piple']('./fig/pipline.jpg')
+!['piple']('fig/pipline.jpg')
 
 ## Requirments
 albumentations=='1.1.0'   
@@ -30,8 +30,8 @@ C3.evaluation-estimate-farm.py
 
 ## Result
 #### Detection
-!['output']('./fig/output.png')  
+!['output']('fig/output.png')  
 
 #### Counting tangerine 
-!['scatter_plot']('./fig/scatter_plot.png')  
+!['scatter_plot']('fig/scatter_plot.png')  
 
