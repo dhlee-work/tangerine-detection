@@ -78,11 +78,6 @@ gen
 *.3dm
 *.max
 
-!/.gitignore
-!/fig/pipline.jpg
-!/fig/output.png
-!/fig/scatter_plot.jpg
-
 .gitignore
 # model weight
 *.pth
@@ -94,8 +89,12 @@ gen
 *.csv
 *.eps
 
+!/.gitignore
 !bin/.gitkeep
 !data/chekpoints/.gitkeep
 !requirements.txt
 src/__pycache__/
-src/model/__pycache__/!/fig/output.png
+src/model/__pycache__/!/fig/output.png!/fig/output.png
+!/fig/pipline.jpg
+!/fig/scatter_plot.jpg
+!/fig/output.png
