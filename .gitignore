@@ -79,6 +79,10 @@ gen
 *.max
 
 !/.gitignore
+!./fig/pipline.jpg
+!./fig/output.png
+!./fig/scatter_plot.jpg
+
 .gitignore
 # model weight
 *.pth
