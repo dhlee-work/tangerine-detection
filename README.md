@@ -30,8 +30,8 @@ C3.evaluation-estimate-farm.py
 
 ## Result
 #### Detection
-!['piple']('./fig/output.png')
+!['output']('./fig/output.png')
 
 #### Counting tangerine 
-!['piple']('./fig/scatter_plot.png')
+!['scatter_plot']('./fig/scatter_plot.png')
 
